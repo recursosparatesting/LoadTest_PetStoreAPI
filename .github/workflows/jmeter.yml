@@ -49,7 +49,7 @@ jobs:
           java -cp ${{ env.JMETER_HOME }}/lib/ext/jmeter-plugins-manager-1.9.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
           echo "Instalando plugins requeridos usando ${PLUGINS_CMD_PATH}..."
           chmod +x ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh
-          ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh install jpgc-standard
+          ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh install jpgc-standard,jpgc-casutg
 
       - name: 📥 Clonar y compilar la AUT
         run: |
