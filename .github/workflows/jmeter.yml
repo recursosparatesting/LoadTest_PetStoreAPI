@@ -30,33 +30,27 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 📦 Instalar JMeter (Desde Repositorio Oficial)
-        id: install_jmeter
-        run: |
-            JMETER_VERSION=5.6.3
-            JMETER_ARCHIVE=apache-jmeter-${JMETER_VERSION}.zip
-            JMETER_FOLDER=apache-jmeter-${JMETER_VERSION}
-            
-            echo "Descargando JMeter versión ${JMETER_VERSION}..."
-            wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.zip
-            unzip apache-jmeter-${{ env.JMETER_VERSION }}.zip
-            
-            # Agregar el binario a GITHUB_PATH para que el comando 'jmeter' esté disponible
-            echo "${{ env.JMETER_HOME }}/bin" >> $GITHUB_PATH
 
-      - name: 🧩 Install JMeter Plugins Manager
-        id: install_plugins_jmeter
+      - name: ⬇️ Download and Setup Apache JMeter
         run: |
-             PLUGINS_MANAGER_JAR="jmeter-plugins-manager-1.9.jar"
-             PLUGINS_MANAGER_URL="https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar"
-             wget ${PLUGINS_MANAGER_URL} -O ${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}
+          # 1. Descarga e instalación
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.zip
+          unzip apache-jmeter-${{ env.JMETER_VERSION }}.zip
+          
+          # 2. Añadir JMeter al PATH
+          echo "${{ env.JMETER_HOME }}/bin" >> $GITHUB_PATH
+      
 
-      - name: ⚙️ Install Required Plugins
+      - name: 🧩 Install JMeter Plugins Manager and Required Plugins
         run: |
-             echo "Installing required plugins: jpgc-stepping and jpgc-standard"
-             java -cp "${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}" \
-             org.jmeterplugins.repository.PluginManagerCMD \
-             install jpgc-stepping,jpgc-standard
+          PLUGINS_MANAGER_JAR="jmeter-plugins-manager-1.9.jar"
+          PLUGINS_MANAGER_URL="https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar"
+
+          echo "Descargando Plugins Manager JAR..."
+          wget ${PLUGINS_MANAGER_URL} -O ${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}
+
+          echo "Instalando plugins requeridos..."
+          PluginsManagerCMD install jpgc-stepping,jpgc-standard
 
       - name: 📥 Clonar y compilar la AUT
         run: |
