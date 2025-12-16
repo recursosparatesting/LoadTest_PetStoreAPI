@@ -1,0 +1,104 @@
+name: Performance Test Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      aut_repo:
+        description: 'URL del repositorio público de la aplicación bajo prueba (PetStore)'
+        required: true
+        default: 'https://github.com/swagger-api/swagger-petstore.git'
+
+      jmx_file:
+        description: 'Nombre del archivo .jmx de JMeter'
+        required: true
+        default: 'LoadTest_PetStoreApi.jmx'
+
+jobs:
+  performance_run:
+    runs-on: ubuntu-24.04
+    env:
+      JMETER_VERSION: 5.6.3
+      JMETER_HOME: ${{ github.workspace }}/apache-jmeter-5.6.3
+
+    steps:
+      - name: ⚙️ Checkout del Robot (Este Repositorio)
+        uses: actions/checkout@v4
+
+      - name: 📦 Instalar Maven y Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 📦 Instalar JMeter (Desde Repositorio Oficial)
+        id: install_jmeter
+        run: |
+            JMETER_VERSION=5.6.3
+            JMETER_ARCHIVE=apache-jmeter-${JMETER_VERSION}.zip
+            JMETER_FOLDER=apache-jmeter-${JMETER_VERSION}
+            
+            echo "Descargando JMeter versión ${JMETER_VERSION}..."
+            wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.zip
+            unzip apache-jmeter-${{ env.JMETER_VERSION }}.zip
+            
+            # Agregar el binario a GITHUB_PATH para que el comando 'jmeter' esté disponible
+            echo "${{ env.JMETER_HOME }}/bin" >> $GITHUB_PATH
+
+      - name: 🧩 Install JMeter Plugins Manager
+        id: install_plugins_jmeter
+        run: |
+             PLUGINS_MANAGER_JAR="jmeter-plugins-manager-1.9.jar"
+             PLUGINS_MANAGER_URL="https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar"
+             wget ${PLUGINS_MANAGER_URL} -O ${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}
+
+      - name: ⚙️ Install Required Plugins
+        run: |
+             echo "Installing required plugins: jpgc-stepping and jpgc-standard"
+             java -cp "${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}" \
+             org.jmeterplugins.repository.PluginManagerCMD \
+             install jpgc-stepping,jpgc-standard
+
+      - name: 📥 Clonar y compilar la AUT
+        run: |
+          git clone ${{ github.event.inputs.aut_repo }} aut_repo
+
+      - name: 🚀 Ejecutar la AUT en segundo plano
+        run: |
+            # El 'mvn package jetty:run' inicia el servidor en segundo plano
+            cd aut_repo
+            nohup mvn package jetty:run &> aut.log &
+            cd ..
+            echo "La AUT se está iniciando en segundo plano. Esperando..."
+
+      - name: ⏱️ Esperar a que la AUT esté disponible (Health Check)
+        uses: nev7n/wait_for_response@v1
+        with:
+                # URL por defecto de la aplicación PetStore con Jetty
+                url: http://localhost:8080/api/v3/openapi.json
+                timeout: 180000
+                interval: 5000
+                responseCode: 200
+
+
+      - name: 🏃 Ejecutar Pruebas de Carga con JMeter
+        run: |
+            # Asegurarse de que el directorio de resultados existe
+            mkdir -p results
+            
+            # La variable de entorno JMETER_HOME está disponible gracias al paso anterior
+            # Ejecutamos jmeter.sh usando la ruta completa
+            jmeter.sh -n -t ${{ github.event.inputs.jmx_file }} \
+                   -l results/jmeter_raw_results.jtl \
+                   -e -o results/jmeter_html_report
+          
+      - name: 📤 Subir Archivos Crudos de JMeter
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-raw-data
+          path: results/jmeter_raw_results.jtl
+
+      - name: 📤 Subir Reporte HTML Nativo de JMeter
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-native-report
+          path: results/jmeter_html_report/
