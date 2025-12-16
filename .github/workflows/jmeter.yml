@@ -42,12 +42,15 @@ jobs:
           PLUGINS_MANAGER_URL="https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar"
           
           echo "Descargando Plugins Manager JAR..."
-          wget ${PLUGINS_MANAGER_URL} -O ${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}
+          wget https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar -P ${{ env.JMETER_HOME }}/lib/ext/
           
-          PLUGINS_CMD_PATH="${{ env.JMETER_HOME }}/bin/PluginsManagerCMD"
+          wget https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.3/cmdrunner-2.3.jar -P ${{ env.JMETER_HOME }}/lib/
+          
+          
+          java -cp ${{ env.JMETER_HOME }}/lib/ext/jmeter-plugins-manager-1.9.jar org.jmeterplugins.repository.PluginManagerCMDInstalle
           echo "Instalando plugins requeridos usando ${PLUGINS_CMD_PATH}..."
-          
-          ${PLUGINS_CMD_PATH} install jpgc-stepping,jpgc-standard
+          chmod +x ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh
+          ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh install jpgc-standard
 
       - name: 📥 Clonar y compilar la AUT
         run: |
