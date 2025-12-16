@@ -77,6 +77,7 @@ jobs:
           # Descargar el agente que monitorea el servidor
           wget https://github.com/undera/perfmon-agent/releases/download/2.2.3/ServerAgent-2.2.3.zip
           unzip ServerAgent-2.2.3.zip -d server-agent
+          mv server-agent/ServerAgent-2.2.3/* server-agent/
           chmod +x server-agent/startAgent.sh
           
           # EJECUTAR EN SEGUNDO PLANO (&) para que no bloquee el pipeline
