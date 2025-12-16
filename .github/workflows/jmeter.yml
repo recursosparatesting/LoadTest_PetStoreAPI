@@ -30,27 +30,24 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-
       - name: ⬇️ Download and Setup Apache JMeter
         run: |
-          # 1. Descarga e instalación
-          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.zip
-          unzip apache-jmeter-${{ env.JMETER_VERSION }}.zip
-          
-          # 2. Añadir JMeter al PATH
-          echo "${{ env.JMETER_HOME }}/bin" >> $GITHUB_PATH
-      
+         wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.zip
+         unzip apache-jmeter-${{ env.JMETER_VERSION }}.zip
+         echo "${{ env.JMETER_HOME }}/bin" >> $GITHUB_PATH
 
       - name: 🧩 Install JMeter Plugins Manager and Required Plugins
         run: |
           PLUGINS_MANAGER_JAR="jmeter-plugins-manager-1.9.jar"
           PLUGINS_MANAGER_URL="https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar"
-
+          
           echo "Descargando Plugins Manager JAR..."
           wget ${PLUGINS_MANAGER_URL} -O ${{ env.JMETER_HOME }}/lib/ext/${PLUGINS_MANAGER_JAR}
-
-          echo "Instalando plugins requeridos..."
-          PluginsManagerCMD install jpgc-stepping,jpgc-standard
+          
+          PLUGINS_CMD_PATH="${{ env.JMETER_HOME }}/bin/PluginsManagerCMD"
+          echo "Instalando plugins requeridos usando ${PLUGINS_CMD_PATH}..."
+          
+          ${PLUGINS_CMD_PATH} install jpgc-stepping,jpgc-standard
 
       - name: 📥 Clonar y compilar la AUT
         run: |
