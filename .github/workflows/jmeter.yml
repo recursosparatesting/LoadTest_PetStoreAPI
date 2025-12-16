@@ -43,11 +43,10 @@ jobs:
           
           echo "Descargando Plugins Manager JAR..."
           wget https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.9/jmeter-plugins-manager-1.9.jar -P ${{ env.JMETER_HOME }}/lib/ext/
-          
+        
           wget https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.3/cmdrunner-2.3.jar -P ${{ env.JMETER_HOME }}/lib/
-          
-          
-          java -cp ${{ env.JMETER_HOME }}/lib/ext/jmeter-plugins-manager-1.9.jar org.jmeterplugins.repository.PluginManagerCMDInstalle
+            
+          java -cp ${{ env.JMETER_HOME }}/lib/ext/jmeter-plugins-manager-1.9.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
           echo "Instalando plugins requeridos usando ${PLUGINS_CMD_PATH}..."
           chmod +x ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh
           ${{ env.JMETER_HOME }}/bin/PluginsManagerCMD.sh install jpgc-standard
