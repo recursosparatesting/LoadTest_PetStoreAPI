@@ -91,6 +91,7 @@ jobs:
         run: |
             # Asegurarse de que el directorio de resultados existe
             mkdir -p results
+            mkdir -p results/html_report
             
             # La variable de entorno JMETER_HOME está disponible gracias al paso anterior
             # Ejecutamos jmeter.sh usando la ruta completa
