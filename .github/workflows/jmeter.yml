@@ -106,10 +106,10 @@ jobs:
             results/
           include-hidden-files: true
 
-      - name: 📤 Upload Performance Artifacts
-        uses: actions/upload-artifact@v4
+      - name: 📤 Subir reporte HTML Nativo de Jmeter
+        run: actions/upload-artifact@v4
         with:
-          name: performance-reports
-          path: |
-            results/html_report
+          name: jmeter-native-report
+          path: results/html_report/
+          if-no-files-found: warn
           include-hidden-files: true
