@@ -13,7 +13,7 @@ Esto estilo de recoleccion de datos de Performance (comportamiento del host), so
 ## 🚀 Pipeline de Ejecucion en GibhubActions
 El pipeline descarga la aplicacion bajo prueba de la siguiente url:
 `https://github.com/swagger-api/swagger-petstore.git`, la ejecuta y comprueba que este disponible.
-Tambien descarga Jmeter. Descarga e instala los plugins necesarios.
+Tambien descarga Jmeter. Descarga e instala los plugins utilizados en el script. 
 Ejecuta la prueba y genera el reporte HTML.
 
 El pipeline corre en sistema operativo Ubuntu 24.04. Pero podria usarse en entornos windows o cualquier otra distribucion Linux.

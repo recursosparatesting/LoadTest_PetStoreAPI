@@ -96,7 +96,7 @@ jobs:
             # La variable de entorno JMETER_HOME está disponible gracias al paso anterior
             # Ejecutamos jmeter.sh usando la ruta completa
             jmeter.sh -n -t ${{ github.event.inputs.jmx_file }} \
-                   -l results/results.jtl -Jresults_path=results -e -o results/html_report 
+                   -Jresults_path=results -l results/results.jtl  -e -o results/html_report 
           
       - name: 📤 Upload Performance Artifacts
         uses: actions/upload-artifact@v4
