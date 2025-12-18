@@ -105,10 +105,3 @@ jobs:
           path: |
             results/
           include-hidden-files: true
-
-      - name: 📤 Subir reporte HTML Nativo de Jmeter
-        uses: actions/upload-artifact@v4
-        with:
-          path: results/html_report/
-          if-no-files-found: warn
-          include-hidden-files: true
