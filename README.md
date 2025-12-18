@@ -7,14 +7,13 @@ Esto estilo de recoleccion de datos de Performance (comportamiento del host), so
 
 
 ## 📋 Requisitos
-* El script en Jmeter fue desarrollado para la version 5.6.3 con 
+* El script en Jmeter fue desarrollado para la version 5.6.3 
 * Java 17
 
 ## 🚀 Pipeline de Ejecucion en GibhubActions
 El pipeline descarga la aplicacion bajo prueba de la siguiente url:
-`https://github.com/swagger-api/swagger-petstore.git`
+`https://github.com/swagger-api/swagger-petstore.git`, la ejecuta y comprueba que este disponible.
 Tambien descarga Jmeter. Descarga e instala los plugins necesarios.
 Ejecuta la prueba y genera el reporte HTML.
 
 El pipeline corre en sistema operativo Ubuntu 24.04. Pero podria usarse en entornos windows o cualquier otra distribucion Linux.
-
