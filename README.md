@@ -16,4 +16,4 @@ El pipeline descarga la aplicacion bajo prueba de la siguiente url:
 Tambien descarga Jmeter. Descarga e instala los plugins utilizados en el script. 
 Ejecuta la prueba y genera el reporte HTML.
 
-El pipeline corre en sistema operativo Ubuntu 24.04. Pero podria usarse en entornos windows o cualquier otra distribucion Linux.
+El pipeline corre en sistema operativo Ubuntu 24.04. Sin embargo, la automatizaicon podria usarse en entornos windows o cualquier otra distribucion Linux.
